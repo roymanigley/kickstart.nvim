@@ -225,6 +225,11 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+
+  -- CUSTOM PLUGINS
+  'preservim/nerdtree',
+  'terryma/vim-multiple-cursors',
+
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -910,3 +915,17 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- CUSTOM KEY BINDINGS
+vim.keymap.set('n', '<C-e>', ':NERDTreeToggle<CR>', { desc = 'Toggle NERDTree' })
+vim.keymap.set('n', '<C-q>', ':qa<CR>', { desc = 'Close all (:qa)' })
+vim.keymap.set('i', '<C-q>', '<ESC>:qa<CR>', { desc = 'Close all (:qa)' })
+vim.keymap.set('n', '<C-d>', ':q<CR>', { desc = 'Close current (:q)' })
+vim.keymap.set('i', '<C-d>', '<ESC>:q<CR>', { desc = 'Close current (:q)' })
+vim.keymap.set('n', '<C-s>', ':w<CR>', { desc = 'Close current (:q)' })
+vim.keymap.set('i', '<C-s>', '<ESC>:w<CR>i', { desc = 'Close current (:q)' })
+vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Copy to clipboard' })
+vim.keymap.set('n', '<leader>p', '"+p', { desc = 'Paste from system clipboard' })
+vim.keymap.set('n', '<leader>P', '"+P', { desc = 'Paste from system clipboard' })
+
+vim.wo.relativenumber = true
