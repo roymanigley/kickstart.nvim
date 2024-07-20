@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -229,7 +229,9 @@ require('lazy').setup({
   -- CUSTOM PLUGINS
   'preservim/nerdtree',
   'terryma/vim-multiple-cursors',
-
+  'mfussenegger/nvim-dap',
+  'rcarriga/nvim-dap-ui',
+  'nvim-neotest/nvim-nio',
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -285,19 +287,29 @@ require('lazy').setup({
       require('which-key').setup()
 
       -- Document existing key chains
-      require('which-key').register {
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-        ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-        ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+      require('which-key').add {
+        { '<leader>c', group = '[C]ode' },
+        { '<leader>c_', hidden = true },
+        { '<leader>d', group = '[D]ocument' },
+        { '<leader>d_', hidden = true },
+        { '<leader>h', group = 'Git [H]unk' },
+        { '<leader>h_', hidden = true },
+        { '<leader>r', group = '[R]ename' },
+        { '<leader>r_', hidden = true },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>s_', hidden = true },
+        { '<leader>t', group = '[T]oggle' },
+        { '<leader>t_', hidden = true },
+        { '<leader>w', group = '[W]orkspace' },
+        { '<leader>w_', hidden = true },
+        { '_', group = '[D]ebugger' },
+        { '__', hidden = true },
       }
       -- visual mode
-      require('which-key').register({
-        ['<leader>h'] = { 'Git [H]unk' },
-      }, { mode = 'v' })
+      require('which-key').add {
+        { '<leader>h', desc = { 'Git [H]unk' }, mode = 'v' },
+        -- ['<leader>h'] = { desc = { 'Git [H]unk' }, mode = 'v' },
+      }
     end,
   },
 
@@ -913,6 +925,57 @@ require('lazy').setup({
   },
 })
 
+local pythonPath = function()
+  local cwd = vim.loop.cwd()
+  if vim.fn.executable(cwd .. '/.venv/bin/python') == 1 then
+    return cwd .. '/.venv/bin/python'
+  else
+    return '/usr/bin/python3'
+  end
+end
+
+local initDap = function()
+  local dap = require 'dap'
+  require('dapui').setup()
+  dap.configurations.python = {
+    {
+      type = 'python',
+      request = 'launch',
+      name = 'Launch file',
+      program = '${file}',
+      pythonPath = pythonPath(),
+    },
+    {
+      type = 'python',
+      request = 'launch',
+      name = 'DAP Django',
+      program = vim.loop.cwd() .. '/manage.py',
+      args = { 'runserver', '--noreload' },
+      justMyCode = true,
+      django = true,
+      console = 'integratedTerminal',
+    },
+    {
+      type = 'python',
+      request = 'attach',
+      name = 'Attach remote',
+      connect = function()
+        return {
+          host = '127.0.0.1',
+          port = 5678,
+        }
+      end,
+    },
+  }
+
+  dap.adapters.python = {
+    type = 'executable',
+    command = pythonPath(),
+    args = { '-m', 'debugpy.adapter' },
+  }
+end
+
+initDap()
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
@@ -927,5 +990,13 @@ vim.keymap.set('i', '<C-s>', '<ESC>:w<CR>i', { desc = 'Close current (:q)' })
 vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Copy to clipboard' })
 vim.keymap.set('n', '<leader>p', '"+p', { desc = 'Paste from system clipboard' })
 vim.keymap.set('n', '<leader>P', '"+P', { desc = 'Paste from system clipboard' })
+
+vim.keymap.set('n', '_u', ":lua require'dapui'.toggle()<CR>", { desc = 'DEBUGGER: toggle UI' })
+vim.keymap.set('n', '_c', ":lua require'dap'.continue()<CR>", { desc = 'DEBUGGER: continue / start' })
+vim.keymap.set('n', '_s', ":lua require'dap'.step_over()<CR>", { desc = 'DEBUGGER: step over' })
+vim.keymap.set('n', '_i', ":lua require'dap'.step_into()<CR>", { desc = 'DEBUGGER: step into' })
+vim.keymap.set('n', '_o', ":lua require'dap'.step_out()<CR>", { desc = 'DEBUGGER: step out' })
+vim.keymap.set('n', '_b', ":lua require'dap'.toggle_breakpoint()<CR>", { desc = 'DEBUGGER: toggle breakpoint' })
+vim.keymap.set('n', '_B', ":lua require'dap'.toggle_breakpoint('i == 1')", { desc = 'DEBUGGER: toggle conditional breakpoint' })
 
 vim.wo.relativenumber = true
