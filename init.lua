@@ -232,6 +232,7 @@ require('lazy').setup({
   'mfussenegger/nvim-dap',
   'rcarriga/nvim-dap-ui',
   'nvim-neotest/nvim-nio',
+  'ThePrimeagen/refactoring.nvim',
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -307,7 +308,7 @@ require('lazy').setup({
       }
       -- visual mode
       require('which-key').add {
-        { '<leader>h', desc = { 'Git [H]unk' }, mode = 'v' },
+        { '<leader>h', group = 'Git [H]unk', mode = 'v' },
         -- ['<leader>h'] = { desc = { 'Git [H]unk' }, mode = 'v' },
       }
     end,
@@ -998,5 +999,6 @@ vim.keymap.set('n', '_i', ":lua require'dap'.step_into()<CR>", { desc = 'DEBUGGE
 vim.keymap.set('n', '_o', ":lua require'dap'.step_out()<CR>", { desc = 'DEBUGGER: step out' })
 vim.keymap.set('n', '_b', ":lua require'dap'.toggle_breakpoint()<CR>", { desc = 'DEBUGGER: toggle breakpoint' })
 vim.keymap.set('n', '_B', ":lua require'dap'.toggle_breakpoint('i == 1')", { desc = 'DEBUGGER: toggle conditional breakpoint' })
-
+vim.keymap.set('x', '<leader>cm', ':Refactor extract ', { desc = 'extract method' })
+vim.keymap.set('x', '<leader>cv', ':Refactor extract_var ', { desc = 'extract variable' })
 vim.wo.relativenumber = true
