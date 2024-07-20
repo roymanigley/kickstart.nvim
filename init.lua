@@ -227,6 +227,8 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
 
   -- CUSTOM PLUGINS
+  'ryanoasis/vim-devicons',
+  'kyazdani42/nvim-web-devicons',
   'preservim/nerdtree',
   'terryma/vim-multiple-cursors',
   'mfussenegger/nvim-dap',
@@ -926,6 +928,16 @@ require('lazy').setup({
   },
 })
 
+-- vim-devicons settings for NERDTree
+require('nvim-web-devicons').setup {
+  default = true,
+}
+vim.g.NERDTreeShowHidden = 1
+vim.g.webdevicons_enable_nerdtree = 1
+vim.g.WebDevIconsUnicodeDecorateFileNodes = 1
+vim.g.WebDevIconsNerdTreeAfterGlyphPadding = ' ' -- two spaces
+vim.g.WebDevIconsNerdTreeGitPluginForceVAlign = 1
+
 local pythonPath = function()
   local cwd = vim.loop.cwd()
   if vim.fn.executable(cwd .. '/.venv/bin/python') == 1 then
@@ -1003,4 +1015,5 @@ vim.keymap.set('n', '_b', ":lua require'dap'.toggle_breakpoint()<CR>", { desc = 
 vim.keymap.set('n', '_B', ":lua require'dap'.toggle_breakpoint('i == 1')", { desc = 'DEBUGGER: toggle conditional breakpoint' })
 vim.keymap.set('x', '<leader>cm', ':Refactor extract ', { desc = 'extract method' })
 vim.keymap.set('x', '<leader>cv', ':Refactor extract_var ', { desc = 'extract variable' })
+
 vim.wo.relativenumber = true
