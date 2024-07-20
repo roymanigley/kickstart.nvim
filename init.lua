@@ -947,9 +947,11 @@ local initDap = function()
       pythonPath = pythonPath(),
     },
     {
+      -- requires 'pip install debugpy'
       type = 'python',
       request = 'launch',
       name = 'DAP Django',
+      -- program = "${workspaceFolder}/manage.py";
       program = vim.loop.cwd() .. '/manage.py',
       args = { 'runserver', '--noreload' },
       justMyCode = true,
