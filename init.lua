@@ -943,7 +943,7 @@ local pythonPath = function()
   if vim.fn.executable(cwd .. '/.venv/bin/python') == 1 then
     return cwd .. '/.venv/bin/python'
   else
-    return '/usr/bin/python3'
+    return '/home/royman/.pyenv/shims/python'
   end
 end
 
@@ -956,14 +956,19 @@ local initDap = function()
       request = 'launch',
       name = 'Launch file',
       program = '${file}',
-      pythonPath = pythonPath(),
+    },
+    {
+      type = 'python',
+      request = 'launch',
+      name = 'Launch UnitTest',
+      module = 'unittest',
+      args = { '${file}' },
     },
     {
       -- requires 'pip install debugpy'
       type = 'python',
       request = 'launch',
       name = 'DAP Django',
-      -- program = "${workspaceFolder}/manage.py";
       program = vim.loop.cwd() .. '/manage.py',
       args = { 'runserver', '--noreload' },
       justMyCode = true,
@@ -1008,6 +1013,8 @@ vim.keymap.set('n', '<leader>P', '"+P', { desc = 'Paste from system clipboard' }
 
 vim.keymap.set('n', '_u', ":lua require'dapui'.toggle()<CR>", { desc = 'DEBUGGER: toggle UI' })
 vim.keymap.set('n', '_c', ":lua require'dap'.continue()<CR>", { desc = 'DEBUGGER: continue / start' })
+vim.keymap.set('n', '_r', ":lua require'dap'.terminate()<CR>:lua require'dap'.run_last()<CR>", { desc = 'DEBUGGER: rerun last configuration' })
+vim.keymap.set('n', '_t', ":lua require'dap'.terminate()<CR>", { desc = 'DEBUGGER: rerun last configuration' })
 vim.keymap.set('n', '_s', ":lua require'dap'.step_over()<CR>", { desc = 'DEBUGGER: step over' })
 vim.keymap.set('n', '_i', ":lua require'dap'.step_into()<CR>", { desc = 'DEBUGGER: step into' })
 vim.keymap.set('n', '_o', ":lua require'dap'.step_out()<CR>", { desc = 'DEBUGGER: step out' })
